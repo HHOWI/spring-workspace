@@ -9,21 +9,38 @@
 		<result property="addr" column="address"/>
 	</resultMap>
 	
-	<select id="allMember" resultMap="memberMap">
+	<select id="showAllMember" resultMap="memberMap">
 		SELECT *
 		FROM MEMBER
 	</select>
 	
-	<insert id="register" parameterMap="String">
+	<insert id="register" parameterType="Member">
 		INSERT INTO member VALUES (
 		#{id}, #{pwd}, #{name}, #{addr}
 		)
 	</insert>
 	
-	<select id="signIn" parameterType="Member" resultType="Member">
+	<select id="signIn" parameterType="Member" resultMap="memberMap">
 		SELECT *
 		FROM MEMBER
-		WEHRE id=#{id} AND password=#{pwd}
+		WHERE id=#{id} AND password=#{pwd}
 	</select> 
 	
+	<select id="findMember" parameterType="String" resultMap="memberMap">
+		SELECT *
+		FROM MEMBER
+		<where>
+			<if test="keyword != null">
+				id LIKE '%'||#{keyword}||'%' OR
+				name LIKE '%'||#{keyword}||'%' OR
+				address LIKE '%'||#{keyword}||'%'
+			</if>
+		</where>
+	</select>
+	
+	<update id="updateMember" parameterType="Member">
+		UPDATE MEMBER
+		SET password=#{pwd}, name=#{name}, address=#{addr}
+		WHERE id=#{id}
+	</update>
 </mapper>
