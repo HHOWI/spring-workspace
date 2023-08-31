@@ -15,23 +15,34 @@
 	</insert>
 	
 	<select id="selectAll" resultMap="boardMap">
-		SELECT *
+		<![CDATA[
+		SELECT NUM, NO, TITLE, WRITER, REGDATE
+			FROM(
+    			SELECT /*+ INDEX_DESC(BOARD PK_BOARD) */
+    			ROWNUM NUM, NO, TITLE, WRITER, REGDATE
+    			FROM BOARD
+    			WHERE ROWNUM <= #{page} * #{amount}
+				)
+			WHERE NUM > (#{page} - 1) * #{amount}
+			]]>
+	</select>
+	
+	<select id="getTotal" resultType="int">
+		SELECT COUNT(*)
 		FROM BOARD
 	</select>
 	
-	<select id="select" parameterType="String" resultMap="boardMap">
+	<select id="select" parameterType="int" resultMap="boardMap">
 		SELECT *
 		FROM BOARD
-		<where>
-			<if test=""></if>
-		</where>
+		WHERE NO = #{no}
 	</select>
 	
 	<update id="update" parameterType="Board">
-		UPDATE BOARD SET title=#{title}, content=#{content}, writer=#{writer}
+		UPDATE BOARD SET title=#{title}, content=#{content} WHERE no = #{no}
 	</update>
 	
-	<delete id="delete" parameterType="Board">
+	<delete id="delete" parameterType="int">
 		DELETE FROM BOARD WHERE no=#{no}
 	</delete>
 </mapper>

@@ -15,6 +15,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.kh.mvc.model.service.BoardService;
 import com.kh.mvc.model.vo.Board;
+import com.kh.mvc.model.vo.Criteria;
+import com.kh.mvc.model.vo.Paging;
 
 @Controller
 @RequestMapping("/board/*")
@@ -24,20 +26,37 @@ public class BoardController {
 	private BoardService service;
 
 	@GetMapping("/list")
-	public void list(Model model) {
-		List<Board> list = service.selectAll();
+	public void list(Criteria cri, Model model) {
+		List<Board> list = service.selectAll(cri);
 		model.addAttribute("list", list);
+		model.addAttribute("paging", new Paging(cri, service.getTotal()));
 	}
 	
-	@PostMapping
-	
-	@PutMapping
-	
-	@DeleteMapping
-	
-	@RequestMapping("/insert")
+	@GetMapping("/insert")
 	public void insert() {
 		
 	}
 	
+	@PostMapping("/insert")
+	public String insert(Board board) {
+		service.insert(board);
+		return "redirect:/board/list";
+	}
+	
+	@GetMapping("/view")
+	public void view(int no, Model model) {
+		model.addAttribute("vo",service.select(no));
+	}
+	
+	@PostMapping("/update")
+	public String update(Board vo) {
+		service.update(vo);
+		return "redirect:/board/list";
+	}
+	
+	@GetMapping("/delete")
+	public String delete(int no) {
+		service.delete(no);
+		return "redirect:/board/list";
+	}
 }
