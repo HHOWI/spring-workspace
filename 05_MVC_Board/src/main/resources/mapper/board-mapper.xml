@@ -8,18 +8,19 @@
 		<result property="content" column="content"/>
 		<result property="writer" column="writer"/>
 		<result property="regdate" column="regdate"/>
+		<result property="url" column="url"/>
 	</resultMap>
 
 	<insert id="insert" parameterType="Board" useGeneratedKeys="true" keyProperty="no" keyColumn="no">
-		INSERT INTO BOARD VALUES(seq_board.nextval, #{title}, #{content}, #{writer}, default)
+		INSERT INTO BOARD VALUES(seq_board.nextval, #{title}, #{content}, #{writer}, default, #{url})
 	</insert>
 	
 	<select id="selectAll" resultMap="boardMap">
 		<![CDATA[
-		SELECT NUM, NO, TITLE, WRITER, REGDATE
+		SELECT NUM, NO, TITLE, WRITER, REGDATE, URL
 			FROM(
     			SELECT /*+ INDEX_DESC(BOARD PK_BOARD) */
-    			ROWNUM NUM, NO, TITLE, WRITER, REGDATE
+    			ROWNUM NUM, NO, TITLE, WRITER, REGDATE, URL
     			FROM BOARD
     			WHERE ROWNUM <= #{page} * #{amount}
 				)
@@ -39,7 +40,7 @@
 	</select>
 	
 	<update id="update" parameterType="Board">
-		UPDATE BOARD SET title=#{title}, content=#{content} WHERE no = #{no}
+		UPDATE BOARD SET title=#{title}, content=#{content}, url=#{url} WHERE no = #{no}
 	</update>
 	
 	<delete id="delete" parameterType="int">
