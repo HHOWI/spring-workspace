@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="phone">
+	
+	<resultMap type="Phone" id="phoneMap">
+		<id property="num" column="num" />
+		<result property="model" column="model" />
+		<result property="price" column="price" />
+		<association property="company" resultMap="companyMap" />
+	</resultMap>
+	
+	<resultMap type="Company" id="companyMap">
+		<id property="vCode" column="vcode"/>
+		<result property="vendor" column="vendor"/>	
+	</resultMap>
+	
+	<insert id="insert" parameterMap="phoneMap">
+		INSERT INTO PHONE VALUES(#{num}, #{model}, #{price}, #{company.vCode})
+	</insert>
+	
+	<!-- Dynamic Query : selectAll + selectOne(num) -->
+	<select id="select" parameterType="String" resultMap="phoneMap">
+		SELECT *
+		FROM PHONE
+		<where>
+			<if test="num != null">
+			NUM=#{num}
+			</if>
+		</where>
+	</select>
+	
+	<delete id="delete" parameterType="String">
+		DELETE FROM PHONE
+		WHERE NUM=#{num}
+	</delete>
+	
+	<update id="update" parameterMap="phoneMap">
+		UPDATE PHONE
+		SET model=#{model}, price=#{price}, vcode=#{company.vCode}
+		WHERE NUM=#{num}
+	</update>
+	
+	<!-- Dynamic Query : id와 pw 둘다 입력했을때랑 id만 입력했을때 -->
+	<select id="selectUser">
+		SELECT *
+		FROM USERINFO		
+	</select>
+</mapper>

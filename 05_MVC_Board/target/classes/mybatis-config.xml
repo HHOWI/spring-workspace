@@ -8,7 +8,7 @@
 	</settings>
 
 	<typeAliases>
-		<typeAlias type="com.kh.mvc.model.vo.Board" alias="Board" />
+		<package name="com.kh.mvc.model.vo" />
 	</typeAliases>
 
 	<!-- 단위 테스트를 위해서 추가 -->
@@ -28,6 +28,7 @@
 
 	<mappers>
 		<mapper resource="mapper/board-mapper.xml"/>
+		<mapper resource="mapper/member-mapper.xml"/>
 	</mappers>
 </configuration>
 
