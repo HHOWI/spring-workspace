@@ -37,13 +37,12 @@ public class PhoneDAOImpl implements PhoneDAO {
 
 	@Override
 	public List<Phone> select() {
-		return session.selectList("phone.select", session);
+		return session.selectList("phone.select", null);
 	}
 
 	@Override
 	public UserInfo select(UserInfo user) {
-		// TODO Auto-generated method stub
-		return null;
+		return session.selectOne("phone.selectUser", user);
 	}
 
 }

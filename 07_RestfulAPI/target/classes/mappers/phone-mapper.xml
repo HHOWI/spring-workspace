@@ -2,31 +2,32 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="phone">
 	
-	<resultMap type="Phone" id="phoneMap">
+	<resultMap type="phone" id="phoneWithCompany">
 		<id property="num" column="num" />
 		<result property="model" column="model" />
 		<result property="price" column="price" />
-		<association property="company" resultMap="companyMap" />
+		<result property="vCode" column="vcode"/>
+		<association property="company" javaType="company">
+			<id property="vCode" column="vcode"/>
+			<result property="vendor" column="vendor"/>
+		</association>
 	</resultMap>
 	
-	<resultMap type="Company" id="companyMap">
-		<id property="vCode" column="vcode"/>
-		<result property="vendor" column="vendor"/>	
-	</resultMap>
 	
-	<insert id="insert" parameterMap="phoneMap">
-		INSERT INTO PHONE VALUES(#{num}, #{model}, #{price}, #{company.vCode})
+	
+	<insert id="insert" parameterType="Phone">
+		INSERT INTO PHONE VALUES(#{num}, #{model}, #{price}, #{vCode})
 	</insert>
 	
 	<!-- Dynamic Query : selectAll + selectOne(num) -->
-	<select id="select" parameterType="String" resultMap="phoneMap">
-		SELECT *
+	<select id="select" parameterType="String" resultMap="phoneWithCompany">
+		SELECT num, model, price, vcode, vendor
 		FROM PHONE
-		<where>
-			<if test="num != null">
-			NUM=#{num}
-			</if>
-		</where>
+		JOIN company USING(vcode)
+		<if test="num!=null">
+			WHERE NUM=#{num}
+		</if>
+		
 	</select>
 	
 	<delete id="delete" parameterType="String">
@@ -34,15 +35,19 @@
 		WHERE NUM=#{num}
 	</delete>
 	
-	<update id="update" parameterMap="phoneMap">
+	<update id="update" parameterType="Phone">
 		UPDATE PHONE
-		SET model=#{model}, price=#{price}, vcode=#{company.vCode}
+		SET num=#{num}, model=#{model}, price=#{price}, vcode=#{vCode}
 		WHERE NUM=#{num}
 	</update>
 	
 	<!-- Dynamic Query : id와 pw 둘다 입력했을때랑 id만 입력했을때 -->
-	<select id="selectUser">
-		SELECT *
-		FROM USERINFO		
+	<select id="selectUser" parameterType="UserInfo" resultType="UserInfo">
+		SELECT id, pw
+		FROM USERINFO
+		WHERE id=#{id}
+		<if test="pw!=null">
+			AND pw=#{pw}
+		</if>		
 	</select>
 </mapper>
